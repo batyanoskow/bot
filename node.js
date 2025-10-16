@@ -1,20 +1,12 @@
 const TelegramBot = require('node-telegram-bot-api');
 const cron = require('node-cron'); // не забудь npm install node-cron
-// Список приростів (підстав свої числа з таблиці)
 const fs = require('fs');
 let chatIdUser = null;
 
 if (fs.existsSync('chatId.txt')) {
     chatIdUser = fs.readFileSync('chatId.txt', 'utf8').trim();
 }
-const growth_list = {
-    0: 500.0,
-    1: 507.87,
-    2: 515.87,
-    3: 524.0,
-    4: 532.25,
-   
-};
+const growth_list = require('./balance_data.js')
 
 // ------------------ Налаштування ------------------
 const TOKEN = '8179494735:AAHH3-kzojS4oWcH5XVi6H7a-rjLofpap2k'; 
@@ -104,4 +96,5 @@ cron.schedule('*/1 * * * *', () => {
 }, {
     scheduled: true,
     timezone: "Europe/Kyiv"
+
 });
