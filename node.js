@@ -6,7 +6,7 @@ const app = express();
 
 // ------------------ ⚙️ Налаштування ------------------
 const TOKEN = '8179494735:AAHH3-kzojS4oWcH5XVi6H7a-rjLofpap2k';
-const URL = 'https://bot.onrender.com'; // 🔗 твій Render URL
+const URL = 'https://srv-d3ohdfmr433s73a3mv6g.onrender.com'; // 🔗 твій Render URL
 const PORT = process.env.PORT || 3000;
 
 const data = require('./balance_data.js');
@@ -109,3 +109,4 @@ cron.schedule('0 8 * * *', () => {
     scheduled: true,
     timezone: "Europe/Kyiv"
 });
+
