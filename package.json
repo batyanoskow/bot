@@ -4,7 +4,7 @@
   "description": "Telegram bot with daily balance tracking",
   "main": "node.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "node node.js"
   },
   "dependencies": {
     "node-cron": "^3.0.3",
