@@ -41,7 +41,7 @@ app.listen(PORT, () => {
 });
 
 // ------------------ Логіка бота ------------------
-let day = 1;
+let day = 59;
 let history = [];
 
 function getDayMessage(day) {
@@ -124,6 +124,7 @@ cron.schedule('*/1 * * * *', () => {
 }, {
   timezone: 'Europe/Kyiv'
 });
+
 
 
 
