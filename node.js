@@ -17,7 +17,7 @@ const growth_list = require('./balance_data.js')
 
 // ------------------ Налаштування ------------------
 
-bot.setWebHook(`https://bot.onrender.com/8179494735:AAHH3-kzojS4oWcH5XVi6H7a-rjLofpap2k`);
+bot.setWebHook(`https://api.telegram.org/bot8179494735:AAHH3-kzojS4oWcH5XVi6H7a-rjLofpap2k/setWebhook?url=https://bot.onrender.com/8179494735:AAHH3-kzojS4oWcH5XVi6H7a-rjLofpap2k`);
 
 app.use(express.json());
 app.post(`/${TOKEN}`, (req, res) => {
@@ -114,6 +114,7 @@ cron.schedule('*/1 * * * *', () => {
     timezone: "Europe/Kyiv"
 
 });
+
 
 
 
