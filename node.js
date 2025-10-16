@@ -17,7 +17,7 @@ const growth_list = require('./balance_data.js')
 
 // ------------------ Налаштування ------------------
 
-bot.setWebHook(`https://api.render.com/deploy/srv-d3ohdfmr433s73a3mv6g?key=iHvHIf0DJ0s`);
+bot.setWebHook(`https://bot.onrender.com/8179494735:AAHH3-kzojS4oWcH5XVi6H7a-rjLofpap2k`);
 
 app.use(express.json());
 app.post(`/${TOKEN}`, (req, res) => {
@@ -114,6 +114,7 @@ cron.schedule('*/1 * * * *', () => {
     timezone: "Europe/Kyiv"
 
 });
+
 
 
 
