@@ -14,7 +14,10 @@ bot.setWebHook(`${URL}/bot${TOKEN}`);
 
 // === Express middleware ===
 app.use(express.json());
-
+app.all('*', (req, res, next) => {
+  console.log(`🌐 Запит отримано: ${req.method} ${req.url}`);
+  next();
+});
 // === Обробка webhook ===
 app.post(`/bot${TOKEN}`, (req, res) => {
   console.log('📩 Webhook отримано!');
@@ -96,3 +99,4 @@ cron.schedule('0 8 * * *', () => {
     console.log('⚠️ Немає chatId або день не знайдено');
   }
 }, { timezone: 'Europe/Kyiv' });
+
