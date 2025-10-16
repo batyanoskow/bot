@@ -1,6 +1,7 @@
 const TelegramBot = require('node-telegram-bot-api');
 const cron = require('node-cron'); // не забудь npm install node-cron
 const fs = require('fs');
+const data = require('./balance_data.js'); // Імпортуємо об’єкт з даними
 let chatIdUser = null;
 
 if (fs.existsSync('chatId.txt')) {
@@ -10,8 +11,21 @@ const growth_list = require('./balance_data.js')
 
 // ------------------ Налаштування ------------------
 const TOKEN = '8179494735:AAHH3-kzojS4oWcH5XVi6H7a-rjLofpap2k'; 
-const bot = new TelegramBot(TOKEN, { polling: true });
-const data = require('./balance_data.js'); // Імпортуємо об’єкт з даними
+const express = require('express');
+const app = express();
+const bot = new TelegramBot(TOKEN);
+
+bot.setWebHook(`https://api.render.com/deploy/srv-d3ohdfmr433s73a3mv6g?key=iHvHIf0DJ0s`);
+
+app.use(express.json());
+app.post(`/${TOKEN}`, (req, res) => {
+  bot.processUpdate(req.body);
+  res.sendStatus(200);
+});
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`✅ Bot running on port ${PORT}`));
+
 
 let day = 1;
 let history = [];
@@ -98,3 +112,4 @@ cron.schedule('*/1 * * * *', () => {
     timezone: "Europe/Kyiv"
 
 });
+
