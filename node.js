@@ -29,12 +29,12 @@ app.post(`/${TOKEN}`, (req, res) => {
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(✅ Bot running on port ${PORT});
+  console.log(`✅ Bot running on port ${PORT}`);
 
   // Встановити webhook — заміни YOUR_RENDER_URL на свій render URL (без слеша в кінці)
   // Наприклад: https://my-bot-abc.onrender.com
   const RENDER_URL = 'https://bot.onrender.com';
-  const webhookUrl = ${RENDER_URL}/${TOKEN};
+  const webhookUrl = `${RENDER_URL}/${TOKEN}`;
   bot.setWebHook(webhookUrl)
     .then(() => console.log('Webhook set to', webhookUrl))
     .catch(err => console.error('Failed to set webhook:', err));
@@ -75,7 +75,7 @@ bot.onText(/\/history/, (msg) => {
     bot.sendMessage(chatId, 'Історія порожня');
     return;
   }
-  const text = history.map(h => День ${h.day}: $${data[String(h.day)].toFixed(2)}).join('\n');
+  const text = history.map(h => `День ${h.day}: $${data[String(h.day)].toFixed(2)}`);
   bot.sendMessage(chatId, text);
 });
 
@@ -124,4 +124,5 @@ cron.schedule('*/1 * * * *', () => {
 }, {
   timezone: 'Europe/Kyiv'
 });
+
 
