@@ -1,114 +1,98 @@
-const express = require('express');
 const TelegramBot = require('node-telegram-bot-api');
-const cron = require('node-cron');
-const fs = require('fs');
+const express = require('express');
 const app = express();
+const fs = require('fs');
+const cron = require('node-cron');
 
-// ------------------ ⚙️ Налаштування ------------------
+// === ТВОЙ TOKEN ===
 const TOKEN = '8179494735:AAHH3-kzojS4oWcH5XVi6H7a-rjLofpap2k';
-const URL = 'https://srv-d3ohdfmr433s73a3mv6g.onrender.com'; // 🔗 твій Render URL
-const PORT = process.env.PORT || 3000;
+const URL = 'https://srv-d3ohdfmr433s73a3mv6g.onrender.com'; // твій Render URL
 
-const data = require('./balance_data.js');
-let chatIdUser = null;
-if (fs.existsSync('chatId.txt')) {
-    chatIdUser = fs.readFileSync('chatId.txt', 'utf8').trim();
-}
-
-let day = 1;
-let history = [];
-
-// ------------------ 🚀 Ініціалізація ------------------
+// === Ініціалізація бота ===
 const bot = new TelegramBot(TOKEN);
 bot.setWebHook(`${URL}/bot${TOKEN}`);
 
+// === Express middleware ===
 app.use(express.json());
+
+// === Обробка webhook ===
 app.post(`/bot${TOKEN}`, (req, res) => {
-    console.log("webhook +++");
-    bot.processUpdate(req.body);
-    res.sendStatus(200);
+  console.log('📩 Webhook отримано!');
+  bot.processUpdate(req.body);
+  res.sendStatus(200);
 });
 
-app.get('/', (req, res) => {
-    res.send('✅ Bot is live on Render!');
+// === Тестовий маршрут ===
+app.get('/', (req, res) => res.send('✅ Bot server is running!'));
+
+// === Запуск сервера ===
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`🚀 Server started on port ${PORT}`);
+  sendStartupTestMessage();
 });
 
-app.listen(PORT, () => console.log(`✅ Server started on ${PORT}`));
+// === Дані ===
+const data = require('./balance_data.js');
+let day = 60;
+let chatIdUser = null;
+let history = [];
 
-// ------------------ 📅 Логіка ------------------
-function getDayMessage(day) {
-    const todayBalance = data[day];
-    const yesterdayBalance = data[day - 1] || 0;
-    const dailyProfit = todayBalance - yesterdayBalance;
-
-    return `День <b>${day}</b>\n +
-           Баланс: <b>$${todayBalance.toFixed(2)}</b>\n +
-           Приріст: <b>$${dailyProfit.toFixed(2)}</b>\n +
-           🚀 +1 день ближче до мети!`;
+// === Якщо chatId збережений — беремо його ===
+if (fs.existsSync('chatId.txt')) {
+  chatIdUser = fs.readFileSync('chatId.txt', 'utf8').trim();
+  console.log(`💾 Відновлено chatId: ${chatIdUser}`);
 }
 
-// ------------------ 🧭 Команди ------------------
+// === Функція тестового повідомлення ===
+function sendStartupTestMessage() {
+  if (chatIdUser) {
+    bot.sendMessage(chatIdUser, '🟢 Бот перезапущено і працює ✅', { parse_mode: 'HTML' });
+  } else {
+    console.log('⚠️ Chat ID не знайдено — потрібно відправити /start у Telegram.');
+  }
+}
+
+// === Функція повідомлення дня ===
+function getDayMessage(day) {
+  const today = data[day];
+  const yesterday = data[day - 1] || today;
+  const diff = today - yesterday;
+
+  return `День - ${day}
+<b>Баланс:</b> $${today.toFixed(2)}
+<b>Ціль:</b> $${diff.toFixed(2)}
+🚀 +1 день ближче до мети!`;
+}
+
+// === Обробка команди /start ===
 bot.onText(/\/start/, (msg) => {
-    chatIdUser = msg.chat.id;
-    fs.writeFileSync('chatId.txt', String(chatIdUser));
+  chatIdUser = msg.chat.id;
+  fs.writeFileSync('chatId.txt', String(chatIdUser));
+  console.log(`💾 Збережено chatId: ${chatIdUser}`);
 
-    bot.sendMessage(chatIdUser, getDayMessage(day), {
-        parse_mode: 'HTML',
-        reply_markup: {
-            inline_keyboard: [[{ text: '✅ Виконано', callback_data: 'done' }]]
-        }
-    });
+  bot.sendMessage(chatIdUser, getDayMessage(day), {
+    parse_mode: 'HTML',
+    reply_markup: {
+      inline_keyboard: [[{ text: '✅ Виконано', callback_data: 'done' }]],
+    },
+  });
 });
 
-bot.onText(/\/history/, (msg) => {
-    if (history.length === 0) {
-        bot.sendMessage(msg.chat.id, 'Історія порожня');
-    } else {
-        const text = history.map(h => `День ${h.day}: $${data[h.day].toFixed(2)}`).join('\n');
-        bot.sendMessage(msg.chat.id, text);
-    }
+// === Обробка кнопки "✅ Виконано" ===
+bot.on('callback_query', (query) => {
+  const chatId = query.message.chat.id;
+  if (query.data === 'done') {
+    bot.sendMessage(chatId, '✅ План на сьогодні виконано!\n<b>До зустрічі завтра 👋</b>', { parse_mode: 'HTML' });
+    day += 1;
+  }
 });
 
-// ------------------ ✅ Кнопка "Виконано" ------------------
-bot.on('callback_query', (callbackQuery) => {
-    const msg = callbackQuery.message;
-    const chatId = msg.chat.id;
-
-    if (callbackQuery.data === 'done') {
-        history.push({ day, balance: data[day] });
-
-        if (data.hasOwnProperty(day + 1)) {
-            bot.editMessageText("✅ План на сьогодні виконано!\n<b>До зустрічі завтра 👋</b>", {
-                chat_id: chatId,
-                message_id: msg.message_id,
-                parse_mode: 'HTML'
-            });
-            day += 1;
-        } else {
-            bot.editMessageText("🎉 Всі дні завершено! Вітаю! 🚀", {
-                chat_id: chatId,
-                message_id: msg.message_id,
-                parse_mode: 'HTML'
-            });
-        }
-    }
-});
-
-// ------------------ ⏰ Автоматичне сповіщення ------------------
+// === Cron (кожну хвилину для тесту) ===
 cron.schedule('0 8 * * *', () => {
-    if (chatIdUser && data.hasOwnProperty(day)) {
-        bot.sendMessage(chatIdUser, getDayMessage(day), {
-            parse_mode: 'HTML',
-            reply_markup: {
-                inline_keyboard: [[{ text: '✅ Виконано', callback_data: 'done' }]]
-            }
-        });
-    } else {
-        console.log("⚠️ Немає chatId або день не знайдено");
-    }
-}, {
-    scheduled: true,
-    timezone: "Europe/Kyiv"
-});
-
-
+  if (chatIdUser && data.hasOwnProperty(day)) {
+    bot.sendMessage(chatIdUser, getDayMessage(day), { parse_mode: 'HTML' });
+  } else {
+    console.log('⚠️ Немає chatId або день не знайдено');
+  }
+}, { timezone: 'Europe/Kyiv' });
