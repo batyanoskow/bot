@@ -13,6 +13,17 @@ const growth_list = require('./balance_data.js')
 const TOKEN = '8179494735:AAHH3-kzojS4oWcH5XVi6H7a-rjLofpap2k'; 
 const express = require('express');
 const app = express();
+
+app.use(express.json());
+
+// ✅ цей маршрут повинен точно збігатися з тим, що ти ставиш у вебхуку!
+app.post(`/${TOKEN}`, (req, res) => {
+  bot.processUpdate(req.body);
+  res.sendStatus(200);
+});
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`✅ Bot running on port ${PORT}`));
 const bot = new TelegramBot(TOKEN);
 
 bot.setWebHook(`https://api.render.com/deploy/srv-d3ohdfmr433s73a3mv6g?key=iHvHIf0DJ0s`);
@@ -112,4 +123,5 @@ cron.schedule('*/1 * * * *', () => {
     timezone: "Europe/Kyiv"
 
 });
+
 
