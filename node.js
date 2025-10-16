@@ -39,10 +39,10 @@ function getDayMessage(day) {
     const yesterdayBalance = data[day - 1] || 0;
     const dailyProfit = todayBalance - yesterdayBalance;
 
-    return День <b>${day}</b>\n +
+    return `День <b>${day}</b>\n +
            Баланс: <b>$${todayBalance.toFixed(2)}</b>\n +
            Приріст: <b>$${dailyProfit.toFixed(2)}</b>\n +
-           🚀 +1 день ближче до мети!;
+           🚀 +1 день ближче до мети!`;
 }
 
 // ------------------ 🧭 Команди ------------------
@@ -110,3 +110,4 @@ cron.schedule('0 8 * * *', () => {
     scheduled: true,
     timezone: "Europe/Kyiv"
 });
+
