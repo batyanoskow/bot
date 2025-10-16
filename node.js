@@ -21,7 +21,7 @@ function getDayMessage(day) {
   const yesterdayBalance = data[day - 1] || todayBalance;
   const dailyProfit = todayBalance - yesterdayBalance;
 
-  return 📅 <b>День:</b> ${day}\n💰 <b>Баланс:</b> <b>$${todayBalance.toFixed(2)}</b>\n🎯 <b>Заробіток за день:</b> <b>$${dailyProfit.toFixed(2)}</b>\n🚀 +1 день ближче до мети!;
+  return `📅 <b>День:</b> ${day}\n💰 <b>Баланс:</b> <b>$${todayBalance.toFixed(2)}</b>\n🎯 <b>Заробіток за день:</b> <b>$${dailyProfit.toFixed(2)}</b>\n🚀 +1 день ближче до мети!`;
 }
 
 // ------------------ /start ------------------
@@ -99,3 +99,4 @@ cron.schedule(
 );
 
 console.log('✅ Бот запущено у режимі polling');
+
