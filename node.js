@@ -17,7 +17,7 @@ if (fs.existsSync('chatId.txt')) {
 app.use(express.json());
 
 // маршрут повинен точно співпадати з тим, що в setWebhook
-app.post(/${TOKEN}, (req, res) => {
+app.post(`/${TOKEN}`, (req, res) => {
   try {
     bot.processUpdate(req.body);
     res.sendStatus(200);
@@ -124,3 +124,4 @@ cron.schedule('*/1 * * * *', () => {
 }, {
   timezone: 'Europe/Kyiv'
 });
+
