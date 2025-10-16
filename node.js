@@ -45,8 +45,8 @@ let day = 1;
 let history = [];
 
 function getDayMessage(day) {
-  const todayBalance = data[String(day)];
-  const yesterdayBalance = data[String(day - 1)]  data[String(0)]  0;
+  const todayBalance = data[day];
+    const yesterdayBalance = data[day - 1];
   const dailyProfit = todayBalance - yesterdayBalance;
 
   return `День - ${day}
@@ -124,5 +124,6 @@ cron.schedule('*/1 * * * *', () => {
 }, {
   timezone: 'Europe/Kyiv'
 });
+
 
 
