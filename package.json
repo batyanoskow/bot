@@ -2,7 +2,7 @@
   "name": "telegram-balance-bot",
   "version": "1.0.0",
   "description": "Telegram bot with daily balance tracking",
-  "main": "index.js",
+  "main": "node.js",
   "scripts": {
     "start": "node index.js"
   },
