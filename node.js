@@ -95,7 +95,7 @@ bot.on('callback_query', (callbackQuery) => {
 });
 // ------------------ Автоматичне сповіщення о 8:00 ------------------
 
-cron.schedule('*/1 * * * *', () => {
+cron.schedule('0 8 * * *', () => {
     if (chatIdUser && data.hasOwnProperty(day)) {
         const opts = {
             parse_mode: 'HTML',
@@ -114,6 +114,7 @@ cron.schedule('*/1 * * * *', () => {
     timezone: "Europe/Kyiv"
 
 });
+
 
 
 
