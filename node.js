@@ -24,6 +24,7 @@ bot.setWebHook(`${URL}/bot${TOKEN}`);
 
 app.use(express.json());
 app.post(`/bot${TOKEN}`, (req, res) => {
+    console.log("webhook +++");
     bot.processUpdate(req.body);
     res.sendStatus(200);
 });
@@ -109,4 +110,5 @@ cron.schedule('0 8 * * *', () => {
     scheduled: true,
     timezone: "Europe/Kyiv"
 });
+
 
