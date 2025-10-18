@@ -12,7 +12,7 @@ if (fs.existsSync('chatId.txt')) {
   chatIdUser = fs.readFileSync('chatId.txt', 'utf8').trim();
 }
 
-let day = 60; // початковий день
+let day = 58; // початковий день
 let history = [];
 
 // ------------------ Функції ------------------
@@ -20,8 +20,9 @@ function getDayMessage(day) {
   const todayBalance = data[day];
   const yesterdayBalance = data[day - 1] || todayBalance;
   const dailyProfit = todayBalance - yesterdayBalance;
+  const dailyStop = dailyProfit / 4;
 
-  return `📅 <b>День:</b> ${day}\n💰 <b>Баланс:</b> <b>$${todayBalance.toFixed(2)}</b>\n🎯 <b>Заробіток за день:</b> <b>$${dailyProfit.toFixed(2)}</b>\n🚀 +1 день ближче до мети!`;
+  return `📅 <b>День:</b> ${day}\n💰 <b>Баланс:</b> <b>$${todayBalance.toFixed(2)}</b>\n🎯 <b>Заробіток за день:</b> <b>$${dailyProfit.toFixed(2)}</b>\n ❌<b>Максимальний стоп-лосс на день:</b> <b>$${dailyStop.toFixed(2)}</b>\n 🚀 +1 день ближче до мети!`;
 }
 
 // ------------------ /start ------------------
@@ -99,4 +100,5 @@ cron.schedule(
 );
 
 console.log('✅ Бот запущено у режимі polling');
+
 
