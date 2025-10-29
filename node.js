@@ -12,7 +12,7 @@ if (fs.existsSync('chatId.txt')) {
   chatIdUser = fs.readFileSync('chatId.txt', 'utf8').trim();
 }
 
-let day = 45; // початковий день
+let day = 90;// початковий день
 let history = [];
 
 // ------------------ Функції ------------------
@@ -100,6 +100,7 @@ cron.schedule(
 );
 
 console.log('✅ Бот запущено у режимі polling');
+
 
 
 
