@@ -149,7 +149,7 @@ bot.on('photo', async (msg) => {
   if (!currentScreens[day]) currentScreens[day] = [];
   currentScreens[day].push(filePath);
 
-  bot.sendMessage(chatId, 📸 Скрін ${index} для дня ${day} збережено, { parse_mode: 'HTML' });
+  bot.sendMessage(chatId,` 📸 Скрін ${index} для дня ${day} збережено, { parse_mode: 'HTML' }`);
 });
 // ------------------ Обробка кнопки ✅ ------------------
 bot.on('callback_query', (callbackQuery) => {
@@ -201,6 +201,7 @@ cron.schedule(
 );
 
 console.log('✅ Бот запущено у режимі polling');
+
 
 
 
