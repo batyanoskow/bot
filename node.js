@@ -92,7 +92,7 @@ bot.on('callback_query', async (callbackQuery) => {
 
   if (callbackQuery.data === 'add_screen') {
     waitingForScreenshot = true;
-    bot.sendMessage(chatId, 📎 Надішли одне або кілька фото для <b>дня ${day}</b>. Коли все — просто натисни ✅ Виконано., { parse_mode: 'HTML' });
+    bot.sendMessage(chatId,` 📎 Надішли одне або кілька фото для <b>дня ${day}</b>. Коли все — просто натисни ✅ Виконано., { parse_mode: 'HTML' }`);
   }
 
   if (callbackQuery.data === 'show_screens') {
@@ -113,7 +113,7 @@ bot.on('callback_query', async (callbackQuery) => {
 
   if (callbackQuery.data === 'done') {
     if (currentScreens[day]?.length) {
-      bot.sendMessage(chatId, ✅ Збережено ${currentScreens[day].length} скрін(ів) для дня ${day}, { parse_mode: 'HTML' });
+      bot.sendMessage(chatId,` ✅ Збережено ${currentScreens[day].length} скрін(ів) для дня ${day}, { parse_mode: 'HTML' }`);
     }
 
     bot.editMessageText("✅ План на сьогодні виконано!\n<b>До зустрічі завтра 👋</b>", { 
@@ -201,6 +201,7 @@ cron.schedule(
 );
 
 console.log('✅ Бот запущено у режимі polling');
+
 
 
 
