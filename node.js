@@ -135,7 +135,7 @@ bot.on('photo', async (msg) => {
 
   const fileId = msg.photo[msg.photo.length - 1].file_id;
   const file = await bot.getFile(fileId);
-  const fileUrl = https://api.telegram.org/file/bot${TOKEN}/${file.file_path};
+  const fileUrl = `https://api.telegram.org/file/bot${TOKEN}/${file.file_path}`;
 
   const folder = path.join(screenshotsDir, `day_${day}`);
   if (!fs.existsSync(folder)) fs.mkdirSync(folder);
@@ -201,6 +201,7 @@ cron.schedule(
 );
 
 console.log('✅ Бот запущено у режимі polling');
+
 
 
 
