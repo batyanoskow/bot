@@ -49,7 +49,7 @@ bot.onText(/\/history/, (msg) => {
     bot.sendMessage(chatId, text);
   }
 });
-const fs = require('fs');
+
 const path = require('path');
 const axios = require('axios');
 
@@ -201,6 +201,7 @@ cron.schedule(
 );
 
 console.log('✅ Бот запущено у режимі polling');
+
 
 
 
