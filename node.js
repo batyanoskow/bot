@@ -29,7 +29,7 @@ if (fs.existsSync('day.txt')) {
 let history = [];
 let currentScreens = {}; // Зберігає тимчасово фото до "✅ Виконано"
 
-// Об'єкт для управління станами очікування (замість окремих булевих змінних)
+// Об'єкт для управління станами очікування
 let waitingFor = {
     changeDay: false,
     diffInput: false,
@@ -53,7 +53,7 @@ function getDayMessage(currentDay) {
     }
 
     const todayBalance = data[currentDay];
-    const yesterdayBalance = data[currentDay - 1] || todayBalance; // Якщо день 1, використовуємо баланс дня 1
+    const yesterdayBalance = data[currentDay - 1] || todayBalance;
     const dailyProfit = todayBalance - yesterdayBalance;
     const dailyStop = dailyProfit / 4;
 
@@ -116,14 +116,14 @@ bot.on('callback_query', async (callbackQuery) => {
     const chatId = msg.chat.id;
     const actionData = callbackQuery.data; // actionData, щоб уникнути конфлікту з імпортом 'data'
 
-    await bot.answerCallbackQuery(callbackQuery.id); // Запобігає постійному завантаженню
+    await bot.answerCallbackQuery(callbackQuery.id);
 
     // --- ✅ Виконано (done) ---
     if (actionData === 'done') {
         // 1. Оповіщення про збереження скрінів
         if (currentScreens[day]?.length) {
             await bot.sendMessage(chatId, `✅ Збережено **${currentScreens[day].length}** скрін(ів) для дня **${day}**`, { parse_mode: 'HTML' });
-            delete currentScreens[day]; // Очищаємо тимчасовий список
+            delete currentScreens[day];
         }
 
         // 2. Скидання станів очікування
@@ -135,8 +135,8 @@ bot.on('callback_query', async (callbackQuery) => {
         history.push({ day, balance: data[day] });
 
         if (data.hasOwnProperty(day + 1)) {
-            day += 1; // Перехід на наступний день
-            saveCurrentDay(); // Зберігаємо новий день у файл
+            day += 1;
+            saveCurrentDay();
 
             bot.editMessageText("✅ План на сьогодні виконано!\n<b>До зустрічі завтра 👋</b>", {
                 chat_id: chatId,
@@ -230,12 +230,18 @@ bot.on('photo', async (msg) => {
 bot.on('message', (msg) => {
     const chatId = msg.chat.id;
 
+    // ВИПРАВЛЕННЯ: Ігноруємо усі команди (повідомлення, що починаються з /),
+    // щоб уникнути конфлікту зі /start, /history тощо.
+    if (msg.text && msg.text.startsWith('/')) {
+        return;
+    }
+
     // --- Зміна дня ---
     if (waitingFor.changeDay) {
         const newDay = parseInt(msg.text);
         if (!isNaN(newDay) && data.hasOwnProperty(newDay)) {
             day = newDay;
-            saveCurrentDay(); // Зберігаємо новий день
+            saveCurrentDay();
             waitingFor.changeDay = false;
             bot.sendMessage(chatId, `✅ День змінено на <b>${day}</b>`, { parse_mode: 'HTML' });
         } else {
@@ -247,7 +253,7 @@ bot.on('message', (msg) => {
     // --- Різниця між днями ---
     if (waitingFor.diffInput) {
         const parts = msg.text.trim().split(/\s+/);
-        waitingFor.diffInput = false; // Скидаємо тут, щоб не обробляло наступні повідомлення
+        waitingFor.diffInput = false;
 
         if (parts.length === 2 && !isNaN(parts[0]) && !isNaN(parts[1])) {
             const d1 = parseInt(parts[0]);
@@ -263,11 +269,6 @@ bot.on('message', (msg) => {
             bot.sendMessage(chatId, '❌ Формат неправильний. Напиши так: 61 65');
         }
         return;
-    }
-
-    // Якщо це не очікуваний текст і не команда, ігноруємо
-    if (msg.text && !msg.text.startsWith('/') && !waitingFor.screenshot) {
-        // Додайте тут загальну обробку тексту, якщо потрібно
     }
 });
 
