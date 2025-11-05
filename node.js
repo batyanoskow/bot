@@ -107,7 +107,7 @@ bot.on('callback_query', async (callbackQuery) => {
     }
 
     for (const file of files) {
-      await bot.sendPhoto(chatId, path.join(folder, file), { caption: 📅 День ${day} });
+      await bot.sendPhoto(chatId, path.join(folder, file), { caption:` 📅 День ${day} `});
     }
   }
 
@@ -201,6 +201,7 @@ cron.schedule(
 );
 
 console.log('✅ Бот запущено у режимі polling');
+
 
 
 
