@@ -24,19 +24,6 @@ function getDayMessage(day) {
 
   return `📅 <b>День:</b> ${day}\n💰 <b>Баланс:</b> <b>$${todayBalance.toFixed(2)}</b>\n🎯 <b>Заробіток за день:</b> <b>$${dailyProfit.toFixed(2)}</b>\n ❌<b>Максимальний стоп-лосс на день:</b> <b>$${dailyStop.toFixed(2)}</b>\n 🚀 +1 день ближче до мети!`;
 }
-
-// ------------------ /start ------------------
-bot.onText(/\/start/, (msg) => {
-  chatIdUser = msg.chat.id;
-  fs.writeFileSync('chatId.txt', String(chatIdUser)); // зберігаємо chat id
-  bot.sendMessage(chatIdUser, getDayMessage(day), {
-    parse_mode: 'HTML',
-    reply_markup: {
-      inline_keyboard: [[{ text: '✅ Виконано', callback_data: 'done' }]],
-    },
-  });
-});
-
 // ------------------ /history ------------------
 bot.onText(/\/history/, (msg) => {
   const chatId = msg.chat.id;
@@ -176,7 +163,60 @@ bot.on('callback_query', (callbackQuery) => {
     }
   }
 });
+let waitingForChangeDay = false;
+let waitingForDiffInput = false;
 
+// --- Обробка callback-кнопок ---
+bot.on('callback_query', (callbackQuery) => {
+  const msg = callbackQuery.message;
+  const chatId = msg.chat.id;
+
+  if (callbackQuery.data === 'change_day') {
+    waitingForChangeDay = true;
+    bot.sendMessage(chatId, '🗓️ Введи новий день (наприклад: 65)');
+  }
+
+  if (callbackQuery.data === 'calc_diff') {
+    waitingForDiffInput = true;
+    bot.sendMessage(chatId, '➗ Введи два дні через пробіл (наприклад: 61 65)');
+  }
+});
+
+// --- Обробка текстових відповідей ---
+bot.on('message', (msg) => {
+  const chatId = msg.chat.id;
+
+  // зміна дня
+  if (waitingForChangeDay) {
+    const newDay = parseInt(msg.text);
+    if (!isNaN(newDay)) {
+      day = newDay;
+      waitingForChangeDay = false;
+      bot.sendMessage(chatId, ✅ День змінено на <b>${day}</b>, { parse_mode: 'HTML' });
+    } else {
+      bot.sendMessage(chatId, '❌ Введи число — номер дня');
+    }
+    return;
+  }
+
+  // різниця між днями
+  if (waitingForDiffInput) {
+    const parts = msg.text.trim().split(/\s+/);
+    if (parts.length === 2 && !isNaN(parts[0]) && !isNaN(parts[1])) {
+      const d1 = parseInt(parts[0]);
+      const d2 = parseInt(parts[1]);
+      if (data[d1] && data[d2]) {
+        const diff = data[d2] - data[d1];
+        bot.sendMessage(chatId, 📊 Різниця між <b>${d1}</b> і <b>${d2}</b>: <b>$${diff.toFixed(2)}</b>, { parse_mode: 'HTML' });
+      } else {
+        bot.sendMessage(chatId, '⚠️ Одного з цих днів немає у списку');
+      }
+    } else {
+      bot.sendMessage(chatId, '❌ Формат неправильний. Напиши так: 61 65');
+    }
+    waitingForDiffInput = false;
+  }
+});
 // ------------------ Автоматичне сповіщення ------------------
 cron.schedule(
   '0 8 * * *', // кожен день о 8:00 ранку
@@ -201,6 +241,7 @@ cron.schedule(
 );
 
 console.log('✅ Бот запущено у режимі polling');
+
 
 
 
